@@ -1,19 +1,19 @@
 import tkinter
 import csv
 import random
+import sys
 from pathlib import Path
 from tkinter import StringVar, OptionMenu
 from tkinter import messagebox
-
 filepath=Path('C:\\Users\\simmy\\PycharmProjects\\pythonProject2\\Library\\book.csv')
 bookdict={'Bookid':'','Book name':'','Author':'','Status':''}
 #with open('book.csv', 'w') as bookfile:
  #   b = csv.DictWriter(bookfile,bookdict.keys())
   #  b.writeheader()
 class Library:
-    def __init__(self):
+    def __init__(self,title):
         self.bookid=''
-        self.book=''
+        self.book=title
         self.author=''
         self.status=''
     def printauthor(self,author):
@@ -45,75 +45,111 @@ class member:
     def checkout(self):
         pass
 
-def addbook(choice):
-    if clicked.get()=='Add':
-        #frame4 = tkinter.LabelFrame(frame3, width=200, height=100, bg='pink')
-        #frame4.grid(row=1, column=1, sticky='nsew')
-        print('Hi')
-        bookid=tkinter.LabelFrame(frame3,text='Book Id :')
-        bookid.grid(row=1,column=1)
-        n = random.randint(1, 999)
-        bookid = 'VI' + str(n)
-        with open('book.csv', 'r') as bookfile:
-            id = csv.DictReader(bookfile)
-            for i in id:
-                if i['Bookid'] == bookid:
-                    print('Error same id')
-                else:
-                    continue
-        bookid1=tkinter.LabelFrame(frame3,text=bookid)
-        bookid1.grid(row=1,column=2)
-    '''    
-    title = input('Enter Title :')
-    author = input('Enter Author :')
-    b1 = Library(title, author)
+#Adding book into the library
+def addbook1():
+    #Frame for addition
+    frame3 = tkinter.LabelFrame(window, width=800, height=450, bg='pink')
+    frame3.grid(row=2, column=0, sticky='nsew')
 
-    with open('book.csv', 'a') as bookfile:
-        b = csv.writer(bookfile)
-        status = input('Enter status :')
-        b.writerow([bookid, b1.book, b1.author, status])
-p=''
-'''
-def manage():
-    def dropdownmenu(event):
-        if passwrdentry.get()=='Hi':
-            dropdown=['Manage Books','Add Books','Delete Books']
-            clicked=tkinter.StringVar(frame3)
-            clicked.set(dropdown[0])
-            drop=OptionMenu(frame3,clicked,*dropdown)
-            drop.grid(row=1,column=0)
-            if clicked.get() == 'Add Books':
-                # frame4 = tkinter.LabelFrame(frame3, width=200, height=100, bg='pink')
-                # frame4.grid(row=1, column=1, sticky='nsew')
-                print('Hi')
-                bookid = tkinter.LabelFrame(frame3, text='Book Id :')
-                bookid.grid(row=1, column=1)
-                n = random.randint(1, 999)
-                bookid = 'VI' + str(n)
-                with open('book.csv', 'r') as bookfile:
-                    id = csv.DictReader(bookfile)
-                    for i in id:
-                        if i['Bookid'] == bookid:
-                            print('Error same id')
-                        else:
-                            continue
-                bookid1 = tkinter.LabelFrame(frame3, text=bookid)
-                bookid1.grid(row=1, column=2)
+    head=tkinter.Label(frame3,text='******You can add books******')
+    head.grid(row=2,column=0,columnspan=3,sticky='nsew')
+    idlabel=tkinter.Label(frame3,text='Book Id :')
+    idlabel.grid(row=3,column=0,sticky='nsew')
+    n = random.randint(1, 999)# creating a unique bookid
+    b='VI' + str(n)
+    bookid=tkinter.StringVar()
+    bookid.set('VI' + str(n))
+
+    identry = tkinter.Label(frame3,textvariable=bookid)
+    identry.grid(row=3, column=1,sticky='nsew')
+    booktitle=tkinter.Label(frame3,text='Book Title:')
+    booktitle.grid(row=4,column=0,sticky='nsew')
+    titleentry=tkinter.Entry(frame3)
+    titleentry.grid(row=4,column=1,sticky='nsew')
+    author=tkinter.Label(frame3,text='Author:')
+    author.grid(row=5,column=0,sticky='nsew')
+    authorentry=tkinter.Entry(frame3)
+    authorentry.grid(row=5,column=1,sticky='nsew')
+    status=tkinter.Label(frame3,text='Status:')
+    status.grid(row=6,column=0,sticky='nsew')
+    statusentry=tkinter.Entry(frame3)
+    statusentry.grid(row=6,column=1,sticky='nsew')
+    def save():
+        title=titleentry.get()
+        print(title)
+        auth=authorentry.get()
+        print(auth)
+        stat=statusentry.get()
+        if title and auth and stat:
+            bk = Library(title)
+            with open('book.csv', 'a') as bookfile:
+                book = csv.writer(bookfile)
+                book.writerow([b,bk.book,auth,stat])
         else:
-            tkinter.messagebox.showerror(title='Error',message='Password Error')
-            print('Error')
+            messagebox.showerror(title='Error',message='Fields cannot be empty')
+    save=tkinter.Button(frame3,command=save,text='Save')
+    save.grid(row=7,column=0,sticky='nsew')
+    # After saving, reset fields
+    def reset():
+        titleentry.delete(0, tkinter.END)  # Reset book title field
+        authorentry.delete(0, tkinter.END)  # Reset author field
+        statusentry.delete(0, tkinter.END)  # Reset status field
+    resetfield=tkinter.Button(frame3,command=reset,text='Reset')
+    resetfield.grid(row=7,column=1,sticky='nsew')
+    addexit=tkinter.Button(frame3,command=frame3.destroy,text='Exit')
+    addexit.grid(row=7,column=2,sticky='nsew')
+
+#Delete book function
+def delbook1():
+    frame3 = tkinter.LabelFrame(window, width=800, height=450, bg='pink')
+    frame3.grid(row=2, column=0, sticky='nsew')
+    idlabel=tkinter.Label(frame3,text='Book Id :')
+    idlabel.grid(row=2,column=0,sticky='nsew')
+    identry=tkinter.Entry(frame3)
+    identry.grid(row=2,column=1,sticky='nsew')
+    def show():
+        id =str(identry.get())
+        print(id)
+        found=False
+        with open('book.csv','r') as bookfile:
+            b=csv.DictReader(bookfile)
+            for i in b:
+                if i['Bookid']==id:
+                    print(i['Book id'])
+                    print(i['Book name'],i['Author'],i['Status'])
+                    #booktitle = tkinter.Label(frame3, text="Book name: %s" % i['Book name'])
+                    #booktitle.grid(row=3, column=0, sticky='nsew')
+                else:
+                    break
 
 
-    frame3 = tkinter.LabelFrame(frame, width=200, height=100, bg='pink')
-    frame3.grid(row=1, column=1, sticky='nsew')
+    showbutton=tkinter.Button(frame3,text='Show',command=show)
+    showbutton.grid(row=2,column=2)
+#login window for authentication
+def loginwin():
+    loginwindow=tkinter.Toplevel(window)
+    loginwindow.geometry('200x100')
+    loginwindow.title('Password window')
+    username=tkinter.Label(loginwindow,text='Username')
+    username.grid(row=0,column=0)
+    userentry=tkinter.Entry(loginwindow)
+    userentry.grid(row=0,column=1)
 
-    passwrdlabel = tkinter.Label(frame3, text='Enter password')
-    passwrdlabel.grid(row=0, column=0)
+    password=tkinter.Label(loginwindow,text='Password')
+    password.grid(row=1,column=0)
+    passentry=tkinter.Entry(loginwindow)
+    passentry.grid(row=1,column=1)
+    def validate():
+        if userentry.get()=='admin' and passentry.get()=='password':
+            messagebox.showinfo(title='Login Success',message='Successful Login')
+            loginwindow.destroy()
+            #addbook1()#calling function for adding books
+        else:
+            messagebox.showerror(title='Error',message='Login failed')
 
-    passwrdentry=tkinter.Entry(frame3,show='*')
-    passwrdentry.grid(row=0,column=1)
-    passwrdentry.bind('<Return>',dropdownmenu)
 
+    check=tkinter.Button(loginwindow,text='Login',command=lambda :[validate()])
+    check.grid(row=2,column=1)
 
 
 
@@ -121,30 +157,32 @@ window=tkinter.Tk()
 window.title('Library')
 window.geometry('800x500')
 
-frame=tkinter.Frame(window)
-frame.pack()
-
-frame1=tkinter.LabelFrame(frame,width=800,height=50,bg='white')
+#Frame1 Title frame
+frame1=tkinter.LabelFrame(window,width=800,height=50,bg='white')
 frame1.grid(row=0,columnspan=2,sticky='nsew')
 label1=tkinter.Label(frame1,text="**********Welcome to Vision Library**********")
-label1.grid(row=0,columnspan=2)
+label1.grid(row=0,columnspan=2,padx=10,pady=10)
 
-frame2=tkinter.LabelFrame(frame,width=200,height=450)
-frame2.grid(row=1,column=0,sticky='nsew')
+#Frame2 contains all buttons sticky nsew streches the buttons uniformly
+frame2=tkinter.LabelFrame(window,width=800,height=250)
+frame2.grid(row=1,columnspan=2,sticky='nsew')
 
-resoursesbutton=tkinter.Button(frame2,text='Resourses',height=1,width=10)
-resoursesbutton.grid(row=1,column=0)
+addbook=tkinter.Button(frame2,text='Add Book',command=lambda :[loginwin(),addbook1()])
+addbook.grid(row=1,column=0,sticky='nsew')
+delbook=tkinter.Button(frame2,text='Delete Book',command=lambda :[delbook1()])
+delbook.grid(row=1,column=1,sticky='nsew')
+search=tkinter.Label(frame2,text='Search')
+search.grid(row=2,column=0,sticky='nsew')
+auth=tkinter.Button(frame2,text='By Author')
+auth.grid(row=2,column=1,sticky='nsew')
+title=tkinter.Button(frame2,text='By Title')
+title.grid(row=2,column=2,sticky='nsew')
 
-managebutton=tkinter.Button(frame2,text='Manage',height=1,width=10,command=manage)
-managebutton.grid(row=2,column=0)
+checkout=tkinter.Button(frame2,text='CheckOuts')
+checkout.grid(row=3,column=0,sticky='nsew')
+returns=tkinter.Button(frame2,text='By Title')
+returns.grid(row=3,column=1,sticky='nsew')
 
-checkoutbutton=tkinter.Button(frame2,text='Checkouts',height=1,width=10)
-checkoutbutton.grid(row=3,column=0)
 
-returnsbutton=tkinter.Button(frame2,text='Returns',height=1,width=10)
-returnsbutton.grid(row=4,column=0)
-
-frame3=tkinter.LabelFrame(frame,width=600,height=450,bg='pink')
-frame3.grid(row=1,column=1,sticky='nsew')
 
 window.mainloop()
