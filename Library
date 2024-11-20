@@ -3,6 +3,7 @@ import csv
 import random
 import os
 import sys
+import ast
 from datetime import datetime,timedelta
 from csv import DictReader, DictWriter
 from pathlib import Path
@@ -13,11 +14,9 @@ from pyexpat.errors import messages
 from six import print_
 
 
-#filepath=Path('C:\\Users\\simmy\\PycharmProjects\\pythonProject2\\Library\\book.csv')
-#bookdict={'Bookid':'','Book title':'','Author':'','Status':''}
-#with open('book.csv', 'w') as bookfile:
-#    b = csv.DictWriter(bookfile,bookdict.keys())
-#    b.writeheader()
+filepath=Path('C:\\Users\\simmy\\PycharmProjects\\pythonProject2\\Library\\book.csv')
+filepath2=Path('C:\\Users\\simmy\\PycharmProjects\\pythonProject2\\Library\\member.csv')
+filepath3=Path('C:\\Users\\simmy\\PycharmProjects\\pythonProject2\\Library\\checkouts.csv')
 #memdict={'Memid':'','Mem name':'','Phoneno':'','Email':''}
 #with open('member.csv', 'w') as memfile:
 #    m = csv.DictWriter(memfile,memdict.keys())
@@ -33,19 +32,10 @@ class Library:
         self.book=title
         self.author=''
         self.status=''
-    def printauthor(self,author):
-        #self.author=author
-        with open('book.csv','r') as authread:
-            auth=csv.DictReader(authread)
-            for a in auth:
-                if a['Author']==author:
-                    print(a['Author'])
-                    print(a['Bookid'],'\t',a['Book title'],'\t',a['Status'])
-                    break
-                else:
-                    print('Books of the author not in resourses. Sorry')
     def genbookid(self):
-        pass
+        n = random.randint(1, 999)  # creating a unique bookid
+        b = 'VI' + str(n)
+        return b
 
 
 
@@ -55,30 +45,27 @@ class Member:
         self.memname=name
         self.bookstaken=''
         self.duedate=''
-    def memprint(self):
-        print(self.memberid,'\t',self.memname,'\t',self.bookstaken,'\t',self.duedate)
-    def rentbook(self):
-        pass
-    def checkout(self):
-        pass
+    def genmemid(self):
+        n = random.randint(1, 999)  # creating a unique bookid
+        b = 'MV' + str(n)
+        return b
 
 #Adding book into the library
 def addbook1():
     #Frame for addition
     frame3 = tkinter.LabelFrame(window, width=800, height=450, bg='pink')
-    frame3.grid(row=2, column=0, sticky='nsew')
+    frame3.grid(row=2, columnspan=2, sticky='nsew',padx=10,pady=10)
 
     head=tkinter.Label(frame3,text='******You can add books******')
     head.grid(row=2,column=0,columnspan=3,sticky='nsew')
     idlabel=tkinter.Label(frame3,text='Book Id :')
     idlabel.grid(row=3,column=0,sticky='nsew')
-    n = random.randint(1, 999)# creating a unique bookid
-    b='VI' + str(n)
-    bookid=tkinter.StringVar()
-    bookid.set('VI' + str(n))
+    # Generate the book ID using the Library's method
+    bk = Library('')  # Create a dummy instance (book title will be empty)
+    bookid = bk.genbookid()  # Generate a unique book ID
+    identry = tkinter.Label(frame3, text=bookid)
+    identry.grid(row=3, column=1, sticky='nsew')
 
-    identry = tkinter.Label(frame3,textvariable=bookid)
-    identry.grid(row=3, column=1,sticky='nsew')
     booktitle=tkinter.Label(frame3,text='Book Title:')
     booktitle.grid(row=4,column=0,sticky='nsew')
     titleentry=tkinter.Entry(frame3)
@@ -99,10 +86,15 @@ def addbook1():
         print(auth)
         stat=statusentry.get()
         if title and auth and stat:
-            bk = Library(title)
-            with open('book.csv', 'a',newline='') as bookfile:
-                book = csv.writer(bookfile)
-                book.writerow([b,bk.book,auth,stat])
+            if not filepath.exists():
+                with open('book.csv', 'a',newline='') as bookfile:
+                    book = csv.writer(bookfile)
+                    book.writerow([bookid,title,auth,stat])
+            else:
+                bookdict = {'Bookid': '', 'Book title': '', 'Author': '', 'Status': ''}
+                with open('book.csv', 'w') as bookfile:
+                    b = csv.DictWriter(bookfile, bookdict.keys())
+                    b.writeheader()
         else:
             messagebox.showerror(title='Error',message='Fields cannot be empty')
     save=tkinter.Button(frame3,command=save,text='Save')
@@ -123,7 +115,7 @@ def addbook1():
 #Delete book function
 def delbook1():
     frame3 = tkinter.LabelFrame(window, width=800, height=450, bg='pink')
-    frame3.grid(row=2, column=0, sticky='nsew')
+    frame3.grid(row=2, column=0, sticky='nsew',padx=10,pady=10)
     idlabel=tkinter.Label(frame3,text='Book Id :')
     idlabel.grid(row=2,column=0,sticky='nsew')
     identry=tkinter.Entry(frame3)
@@ -279,12 +271,10 @@ def addmem():
     head.grid(row=2,column=0,columnspan=3,sticky='nsew')
     idlabel=tkinter.Label(frame3,text='Membership Id :')
     idlabel.grid(row=3,column=0,sticky='nsew')
-    n = random.randint(1, 999)# creating a unique bookid
-    b='MV' + str(n)
-    memid=tkinter.StringVar()
-    memid.set('MV' + str(n))
+    m1 = Member('')
+    memid=m1.genmemid()
 
-    identry = tkinter.Label(frame3,textvariable=memid)
+    identry = tkinter.Label(frame3,text=memid)
     identry.grid(row=3, column=1,sticky='nsew')
     namelabel=tkinter.Label(frame3,text='Name:')
     namelabel.grid(row=4,column=0,sticky='nsew')
@@ -310,7 +300,7 @@ def addmem():
         print(phno1)
         email1=emailentry.get()
         if name and phno1 and email1:
-            m1 = Member(name)
+
             with open('member.csv', 'a',newline='') as memfile:
                 mem = csv.writer(memfile)
                 mem.writerow([b,m1.memname,phno1,email1])# memname is the variable created in the class
@@ -398,9 +388,9 @@ def savechk():
         chk1=DictWriter(chkfile,fieldnames=fieldnames)
         if chkfile.tell() == 0:  # Check if the file is empty
             chk1.writeheader()
-
-        row1={'Memid':nmid[0],'Mem name':nmid[1],'Due date':duedate,'Bookid':ids}
-        chk1.writerow(row1)
+        for i in range(len(ids)):
+            row1={'Memid':nmid[0],'Mem name':nmid[1],'Due date':duedate,'Bookid':ids[i]}
+            chk1.writerow(row1)
     os.remove('chkout.txt')
     os.remove('chkout1.txt')
 
@@ -518,55 +508,88 @@ def checkout():
     chkoutexit.grid(row=5,column=2,sticky='nsew')
 
 
+
+
 def returns():
     frame3 = tkinter.LabelFrame(window, width=800, height=450, bg='pink')
     frame3.grid(row=2, column=0, sticky='nsew')
     names=[]
     bid = []
+    bid1=[]
     mid=''
-    bnm=[]
+    bnm=''
+    rows1=[]
     with open('checkouts.csv','r') as retfile:
         rows=DictReader(retfile)
         for row in rows:
-            a=(row['Mem name'])
+            a=(row['Bookid'])
             names.append(a)
+#            with open('return2.txt','w') as retfile:
+#                retfile.write(b)
+
+    def saveret():
+        os.replace('tempret.csv', 'checkouts.csv')  # replaces the original data file with the content of new csv file
+        messagebox.showerror(title='Success', message='Saved Returns')
 
 
     def selected(*args):
         ch=clicked.get()
         print(ch)
-        with open('checkouts.csv','r') as retfile:
-            rows=DictReader(retfile)
-            for row in rows:
-                if row['Mem name'] ==ch:
-                    print('hi')
-                    bid=row['Bookid']
-        print(bid)
+        filefound=False
         with open('bookcopy.csv','r') as retfile:
-            rows=DictReader(retfile)
-            for row in rows:
-                if row['Bookid'] in bid:
-                    a=row['Bookid']
-                    b=row['Book title']
-                    print('hi')
-                    print(b)
-                    bnm.append(b)
-        def selected1(*args):
-            ch1= clicked1.get()
-            with open('bookcopy.csv','r') as retfile:
-                d=DictReader(retfile)
-                rows = list(d)  # Read all rows into memory
-                for row in rows:
-                    if ch1== row['Book title'] and row['Status']=='NA':
-                        row['status']='A'
-                        return
-        booklabel = tkinter.Label(frame3, text='Book Title:')
-        booklabel.grid(row=3, column=0, sticky='nsew')
-        clicked1 = tkinter.StringVar(frame3)
-        clicked1.set(bnm[0])
-        bnmentry = OptionMenu(frame3, clicked1, *bnm)
-        bnmentry.grid(row=3, column=1, sticky='nsew')
-        clicked1.trace_add("write", selected1)
+            b1=csv.DictReader(retfile)
+            rows1=list(b1)
+        for row in rows1:
+            if row['Bookid'] ==ch and row['Status']=='NA':
+                filefound=True
+                print('hi')
+                bnm=row['Book title']
+                ans = messagebox.askquestion('Returns', "Do you want to return "+bnm+"?")
+                if ans=='yes':
+                    row['Status']='A'
+                else:
+                    break
+        if not filefound:
+            messagebox.showerror(title='Error', message='Book already returned')
+            return
+        with open('bookcopy.csv', 'w') as csvfile:
+            fieldnames = ['Bookid', 'Book title', 'Author', 'Status']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()  # Write the header
+            writer.writerows(rows1)
+        with open('return.txt','w') as retfile:
+            retfile.write(ch)
+
+        bid = ''
+        chkid = ''
+        a = []
+        with open('return.txt', 'r') as retfile:
+            bid = retfile.readline().strip()
+        found=False
+        with open('checkouts.csv', 'r', newline='') as chkfile, \
+            open('tempret.csv', mode='w') as copyfile:  # creating a csv file
+            chkid = csv.DictReader(chkfile)
+            fieldnames = chkid.fieldnames
+            writer = csv.DictWriter(copyfile, fieldnames)  # temp csv file with the same fields
+            writer.writeheader()
+            for item in chkid:
+                print(item)
+                if item['Bookid'] == bid:
+                    id = item['Memid']
+                    nm = item['Mem name']
+                    dt = item['Due date']
+                    memname = tkinter.Label(frame3, text="Member Name :  %s" % item['Mem name'])
+                    memname.grid(row=3, columnspan=2, sticky='nw')
+                    memph = tkinter.Label(frame3, text="Due date :  %s" % item['Due date'])
+                    memph.grid(row=4, columnspan=2, sticky='nw')
+                    delbutton = tkinter.Button(frame3, text='Returns', command=saveret)
+                    delbutton.grid(row=5, column=1, sticky='nsew')
+                    found=True
+                elif item['Bookid']!=bid:
+                    writer.writerow(item)# writes the other files into new csv except for the delete file
+            if not found:
+                messagebox.showerror(title='Error', message='Book not found')
+
 
 
 
@@ -583,49 +606,50 @@ def returns():
 
 window=tkinter.Tk()
 window.title('Library')
-window.geometry('800x500')
+window.geometry('700x500+100+10')  #1000 and 700 are width and height, 100 and 10 are the left, right space and top
+window.config(bg='blue')
+
+#frame=tkinter.Frame(window,width=800,height=500)
+#frame.grid(row=0,column=0,sticky='nsew')
+
+# Configure window resizing behavior
+#window.grid_rowconfigure(0, weight=1)  # Allow row 0 to stretch
+#window.grid_columnconfigure(0, weight=1)  # Allow column 0 to stretch
 
 #Frame1 Title frame
-frame1=tkinter.LabelFrame(window,width=800,height=50,bg='white')
-frame1.grid(row=0,columnspan=2,sticky='nsew')
-label1=tkinter.Label(frame1,text="**********Welcome to Vision Library**********")
-label1.grid(row=0,columnspan=2,padx=10,pady=10)
+frame1=tkinter.LabelFrame(window,width=700,height=50,bg='light blue')
+frame1.grid(row=0,columnspan=2,sticky='nsew',padx=10,pady=10)
+label1=tkinter.Label(frame1,text="**********Welcome to Vision Library**********", font=("Arial", 20))
+label1.grid(row=0,columnspan=2)
 
 #Frame2 contains all buttons sticky nsew streches the buttons uniformly
-frame2=tkinter.LabelFrame(window,width=800,height=250)
-frame2.grid(row=1,columnspan=2,sticky='nsew')
+frame2=tkinter.LabelFrame(window,width=700,height=250)
+frame2.grid(row=1,columnspan=2,sticky='nsew',padx=10,pady=10)
 
-addbook=tkinter.Button(frame2,text='Add Book',command=lambda :[addbook1()])
-addbook.grid(row=1,column=0,sticky='nsew')
+addbook=tkinter.Button(frame2,text='Add Book',font=("Helvetica", 14, "bold"),fg='white',bg='green',relief="raised",activebackground="darkgreen",activeforeground="yellow",command=lambda :[addbook1()])
+addbook.grid(row=1,column=0,sticky='nsew', padx=10, pady=10)
 delbook=tkinter.Button(frame2,text='Delete Book',command=lambda :[delbook1()])
-delbook.grid(row=1,column=1,sticky='nsew')
+delbook.grid(row=1,column=1,sticky='nsew', padx=10, pady=10)
 search=tkinter.Label(frame2,text='Search')
-search.grid(row=2,column=0,sticky='nsew')
+search.grid(row=2,column=0,sticky='nsew', padx=10, pady=10)
 auth=tkinter.Button(frame2,text='By Author',command=searchauthor)
-auth.grid(row=2,column=1,sticky='nsew')
+auth.grid(row=2,column=1,sticky='nsew', padx=10, pady=10)
 title=tkinter.Button(frame2,text='By Title',command=searchtitle)
-title.grid(row=2,column=2,sticky='nsew')
+title.grid(row=2,column=2,sticky='nsew', padx=10, pady=10)
 
 membership=tkinter.Label(frame2,text='Membership')
-membership.grid(row=3,column=0,sticky='nsew')
+membership.grid(row=3,column=0,sticky='nsew', padx=10, pady=10)
 addmember=tkinter.Button(frame2,text='Add',command=addmem)
-addmember.grid(row=3,column=1,sticky='nsew')
+addmember.grid(row=3,column=1,sticky='nsew', padx=10, pady=10)
 delmember=tkinter.Button(frame2,text='Delete',command=delmem)
-delmember.grid(row=3,column=2,sticky='nsew')
+delmember.grid(row=3,column=2,sticky='nsew', padx=10, pady=10)
 
 
 checkout=tkinter.Button(frame2,text='CheckOuts',command=checkout)
-checkout.grid(row=4,column=0,sticky='nsew')
+checkout.grid(row=4,column=0,sticky='nsew', padx=10, pady=10)
 returns=tkinter.Button(frame2,text='Returns',command=returns)
-returns.grid(row=4,column=1,sticky='nsew')
+returns.grid(row=4,column=1,sticky='nsew', padx=10, pady=10)
 
 #booktitle = tkinter.Label(frame3, text="Book name: %s" % item['Book name']) To place both key and value
 window.mainloop()
-'''
 
-    currentdate = datetime.now().date()#current date
-    duedate = currentdate + timedelta(weeks=1)#Adding one week to current date
-    with open('checkouts.csv','a',newline='') as chkfile:
-        chk1=DictWriter(chkfile)
-        chk1.writerow(mid,duedate,id)
-'''
