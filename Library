@@ -17,6 +17,7 @@ from six import print_
 
 filepath=Path('C:\\Users\\simmy\\PycharmProjects\\pythonProject2\\book.csv')
 filepath2=Path('C:\\Users\\simmy\\PycharmProjects\\pythonProject2\\member.csv')
+filepath3=Path('C:\\Users\\simmy\\PycharmProjects\\pythonProject2\\checkouts.csv')
 
 class Library:
     def __init__(self,title):
@@ -90,6 +91,10 @@ def addbook1():
                         b.writeheader()
                         b.writerow(
                             {'Bookid': bookid, 'Book title': title.title(), 'Author': auth.title(), 'Status': stat.upper()})
+                titleentry.delete(0, tkinter.END)  # Reset book title field
+                authorentry.delete(0, tkinter.END)  # Reset author field
+                statusentry.delete(0, tkinter.END)  # Reset status field
+                messagebox.showinfo("Success", "Member details saved successfully.")
             else:
                 messagebox.showerror(title='Error',message='Fields cannot be empty')
         except IOError:
@@ -102,7 +107,11 @@ def addbook1():
     # After saving, reset fields
 
     def reset():
-        addbook1()
+        n = random.randint(1, 999)  # creating a unique bookid
+        b = 'VI' + str(n)
+        identry = tkinter.Label(frame3, text=b, font=("times", 12, "bold"), fg='white', bg='dark slate gray',
+                                relief="ridge")
+        identry.grid(row=3, column=1, sticky='nsew')
         titleentry.delete(0, tkinter.END)  # Reset book title field
         authorentry.delete(0, tkinter.END)  # Reset author field
         statusentry.delete(0, tkinter.END)  # Reset status field
@@ -164,7 +173,7 @@ def delbook1():
                     bookstat = tkinter.Label(frame3, text="Status",font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="sunken")
                     bookstat.grid(row=6, column=0, sticky='nsew')
                     bookst = tkinter.Label(frame3, text=st,relief='solid')
-                    bookstat.grid(row=6, column=1, sticky='nsew')
+                    bookst.grid(row=6, column=1, sticky='nsew')
                     found=True
                 elif item['Bookid']!=id:
                     writer.writerow(item)# writes the other files into new csv except for the matching one
@@ -332,7 +341,11 @@ def addmem():
     emailentry=tkinter.Entry(frame3,relief='solid')
     emailentry.grid(row=6,column=1,sticky='nsew')
     def reset():
-        addmem()
+        n = random.randint(1, 999)  # creating a unique bookid
+        b = 'MV' + str(n)
+        identry = tkinter.Label(frame3, text=b, relief='solid')
+        identry.grid(row=3, column=1, sticky='nsew')
+
         nameentry.delete(0, tkinter.END)  # Reset book title field
         phnoentry.delete(0, tkinter.END)  # Reset author field
         emailentry.delete(0, tkinter.END)  # Reset status field
@@ -347,7 +360,9 @@ def addmem():
                     m = csv.DictWriter(memfile, fieldnames=fieldnames)
                     m.writerow(
                         {'Memid':memid,'Mem name':name.title(),'Phoneno':phno1,'Email':email1.lower()})
-
+                nameentry.delete(0, tkinter.END)  # Reset book title field
+                phnoentry.delete(0, tkinter.END)  # Reset author field
+                emailentry.delete(0, tkinter.END)  # Reset status field
             else:
                 fieldnames = ['Memid', 'Mem name', 'Phoneno', 'Email']
                 with open('member.csv', 'w', newline='') as memfile:
@@ -355,6 +370,9 @@ def addmem():
                     m.writeheader()
                     m.writerow(
                         {'Memid':memid,'Mem name':name.title(),'Phoneno':phno1,'Email':email1.lower()})
+                nameentry.delete(0, tkinter.END)  # Reset book title field
+                phnoentry.delete(0, tkinter.END)  # Reset author field
+                emailentry.delete(0, tkinter.END)  # Reset status field
         else:
             messagebox.showerror(title='Error',message='Fields cannot be empty')
     save=tkinter.Button(frame3,text='Save',command=save,font=("times", 12, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="saddle brown",activeforeground="yellow")
@@ -526,6 +544,7 @@ def checkout():
             writer.writeheader()  # Write the header
             writer.writerows(rows)
         with open('chkout1.txt','a',newline='') as cfile:
+            print('Hi')
             cfile.write(id.strip()+'\n')
         mementry.focus_set()
     print(rows, 'hi')
@@ -577,7 +596,7 @@ def checkout():
 def returns():
     frame3 = tkinter.LabelFrame(window, width=800, height=450, bg='PeachPuff4')# frame 3
     frame3.grid(row=2, columnspan=2, sticky='nsew',padx=10)
-    head=tkinter.Label(frame3,text='******Library Checkouts******',font=("times", 14, "bold"))
+    head=tkinter.Label(frame3,text='******Library Returns******',font=("times", 14, "bold"))
     head.grid(row=2,column=0,columnspan=3,sticky='nsew',pady=5)
     names=[]
     bid = []
@@ -585,14 +604,15 @@ def returns():
     mid=''
     bnm=''
     rows1=[]
+
     with open('checkouts.csv','r') as retfile:
         rows=DictReader(retfile)
+
         for row in rows:
             a=(row['Bookid'])
             names.append(a)
-#            with open('return2.txt','w') as retfile:
-#                retfile.write(b)
-
+        #       with open('return2.txt','w') as retfile:
+        #                retfile.write(b)
     def saveret():
         os.replace('tempret.csv', 'checkouts.csv')  # replaces the original data file with the content of new csv file
         messagebox.showerror(title='Success', message='Saved Returns')
