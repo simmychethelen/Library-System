@@ -94,7 +94,7 @@ def addbook1():
                 titleentry.delete(0, tkinter.END)  # Reset book title field
                 authorentry.delete(0, tkinter.END)  # Reset author field
                 statusentry.delete(0, tkinter.END)  # Reset status field
-                messagebox.showinfo("Success", "Member details saved successfully.")
+                messagebox.showinfo("Success", "Book details saved successfully.")
             else:
                 messagebox.showerror(title='Error',message='Fields cannot be empty')
         except IOError:
@@ -373,6 +373,7 @@ def addmem():
                 nameentry.delete(0, tkinter.END)  # Reset book title field
                 phnoentry.delete(0, tkinter.END)  # Reset author field
                 emailentry.delete(0, tkinter.END)  # Reset status field
+            messagebox.showinfo("Success", "Member details saved successfully.")
         else:
             messagebox.showerror(title='Error',message='Fields cannot be empty')
     save=tkinter.Button(frame3,text='Save',command=save,font=("times", 12, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="saddle brown",activeforeground="yellow")
@@ -446,7 +447,7 @@ def delmem():
     def delcopy():#DElete button
         import os
         os.replace('tempmem.csv','member.csv')# replaces the original data file with the content of new csv file
-        messagebox.showerror(title='Success', message='Book deleted')
+        messagebox.showerror(title='Success', message='Member deleted')
 
     delbutton=tkinter.Button(frame3,command=delcopy,text='Delete',font=("times", 12, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="saddle brown",activeforeground="yellow")
     delbutton.grid(row=7,column=1,sticky='nsew',pady=5)
