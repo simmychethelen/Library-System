@@ -9,10 +9,8 @@ from csv import DictReader, DictWriter
 from pathlib import Path
 from tkinter import StringVar, OptionMenu
 from tkinter import messagebox
-from tkinter.constants import CENTER, RIGHT
 
-from pyexpat.errors import messages
-from six import print_
+
 
 
 filepath=Path('C:\\Users\\simmy\\PycharmProjects\\pythonProject2\\book.csv')
@@ -21,184 +19,439 @@ filepath3=Path('C:\\Users\\simmy\\PycharmProjects\\pythonProject2\\checkouts.csv
 
 class Library:
     def __init__(self,title):
-        self.bookid=''
-        self.book=title
-        self.author=''
-        self.status=''
-    def genbookid(self):
-            n = random.randint(1, 999)  # creating a unique bookid
-            b = 'VI' + str(n)
-            return b
-
-class Member:
-    def __init__(self,name):
-        self.memberid=''
-        self.memname=name
-        self.bookstaken=''
-        self.duedate=''
-    def genmemid(self):
-        n = random.randint(1, 999)  # creating a unique bookid
-        b = 'MV' + str(n)
-        return b
-
-#########################Adding book into the library#########################
-def addbook1():
-    #Frame for addition
-    frame3 = tkinter.LabelFrame(window, width=700, height=450, bg='PeachPuff4')
-    frame3.grid(row=2, columnspan=2, sticky='nsew',padx=10)
-
-    head=tkinter.Label(frame3,text='******You can add books******',font=("times", 14, "bold"))
-    head.grid(row=2,column=0,columnspan=3,sticky='nsew')
-    idlabel=tkinter.Label(frame3,text='Book Id :',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="ridge")
-    idlabel.grid(row=3,column=0,sticky='nsew')
-    # Generate the book ID using the Library's method
-    bk = Library('')  # Create a dummy instance (book title will be empty)
-    bookid = bk.genbookid()  # Generate a unique book ID
-    identry = tkinter.Label(frame3, text=bookid,font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="ridge")
-    identry.grid(row=3, column=1, sticky='nsew')
-
-    booktitle=tkinter.Label(frame3,text='Book Title:',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="ridge")
-    booktitle.grid(row=4,column=0,sticky='nsew')
-    titleentry=tkinter.Entry(frame3)
-    titleentry.grid(row=4,column=1,sticky='nsew')
-    author=tkinter.Label(frame3,text='Author:',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="ridge")
-    author.grid(row=5,column=0,sticky='nsew')
-    authorentry=tkinter.Entry(frame3)
-    authorentry.grid(row=5,column=1,sticky='nsew')
-    status=tkinter.Label(frame3,text='Status:',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="ridge")
-    status.grid(row=6,column=0,sticky='nsew')
-    statusentry = tkinter.Spinbox(frame3, values=('A', 'NA'),width=2)
-    statusentry.grid(row=6, column=1,sticky='nsew')
-
-###############save the book files in book.csv############
-    def save():
-        try:
-            title=titleentry.get()
-            auth=authorentry.get()
-            stat=statusentry.get()
-            if title and auth and stat:
-                if filepath.exists():
-                    with open('book.csv', 'a', newline='') as bookfile:
-                        fieldnames = ['Bookid', 'Book title', 'Author', 'Status']
-                        book = csv.DictWriter(bookfile, fieldnames=fieldnames)
-                        book.writerow(
-                            {'Bookid': bookid, 'Book title': title.title(), 'Author': auth.title(), 'Status': stat.upper()})
-
-                else:
-                    fieldnames = ['Bookid', 'Book title', 'Author', 'Status']
-                    with open('book.csv', 'w', newline='') as bookfile:
-                        b = csv.DictWriter(bookfile, fieldnames=fieldnames)
-                        b.writeheader()
-                        b.writerow(
-                            {'Bookid': bookid, 'Book title': title.title(), 'Author': auth.title(), 'Status': stat.upper()})
-                titleentry.delete(0, tkinter.END)  # Reset book title field
-                authorentry.delete(0, tkinter.END)  # Reset author field
-                statusentry.delete(0, tkinter.END)  # Reset status field
-                messagebox.showinfo("Success", "Book details saved successfully.")
-            else:
-                messagebox.showerror(title='Error',message='Fields cannot be empty')
-        except IOError:
-            messagebox.showerror("Error", "Error while writing to file")
-        except Exception:
-                messagebox.showerror("Error", "An unexpected error occurred")
-    # save button for books
-    save=tkinter.Button(frame3,command=save,text='Save',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    save.grid(row=7,column=0,sticky='nsew',pady=5)
-    # After saving, reset fields
-
-    def reset():
         n = random.randint(1, 999)  # creating a unique bookid
         b = 'VI' + str(n)
-        identry = tkinter.Label(frame3, text=b, font=("times", 12, "bold"), fg='white', bg='dark slate gray',
+        self.bookid=b
+        self.title=title
+        self.author=''
+        self.status=''
+    def addbook(self):
+        frame3 = tkinter.LabelFrame(window, width=700, height=450, bg='PeachPuff4')
+        frame3.grid(row=2, columnspan=2, sticky='nsew', padx=10)
+
+        head = tkinter.Label(frame3, text='******You can add books******', font=("times", 14, "bold"))
+        head.grid(row=2, column=0, columnspan=3, sticky='nsew')
+        idlabel = tkinter.Label(frame3, text='Book Id :', font=("times", 12, "bold"), fg='white', bg='dark slate gray',
+                                relief="ridge")
+        idlabel.grid(row=3, column=0, sticky='nsew')
+        identry = tkinter.Label(frame3, text=self.bookid, font=("times", 12, "bold"), fg='white', bg='dark slate gray',
                                 relief="ridge")
         identry.grid(row=3, column=1, sticky='nsew')
-        titleentry.delete(0, tkinter.END)  # Reset book title field
-        authorentry.delete(0, tkinter.END)  # Reset author field
-        statusentry.delete(0, tkinter.END)  # Reset status field
+        booktitle = tkinter.Label(frame3, text='Book Title:', font=("times", 12, "bold"), fg='white',
+                                  bg='dark slate gray', relief="ridge")
+        booktitle.grid(row=4, column=0, sticky='nsew')
+        titleentry = tkinter.Entry(frame3)
+        titleentry.grid(row=4, column=1, sticky='nsew')
+        author = tkinter.Label(frame3, text='Author:', font=("times", 12, "bold"), fg='white', bg='dark slate gray',
+                               relief="ridge")
+        author.grid(row=5, column=0, sticky='nsew')
+        authorentry = tkinter.Entry(frame3)
+        authorentry.grid(row=5, column=1, sticky='nsew')
+        status = tkinter.Label(frame3, text='Status:', font=("times", 12, "bold"), fg='white', bg='dark slate gray',
+                               relief="ridge")
+        status.grid(row=6, column=0, sticky='nsew')
+        statusentry = tkinter.Spinbox(frame3, values=('A', 'NA'), width=2)
+        statusentry.grid(row=6, column=1, sticky='nsew')
+
+        def save():
+            try:
+                self.title = titleentry.get()
+                self.author = authorentry.get()
+                self.status = statusentry.get()
+                if self.title and self.author and self.status:
+                    if filepath.exists():
+                        with open('book.csv', 'a', newline='') as bookfile:
+                            fieldnames = ['Bookid', 'Book title', 'Author', 'Status']
+                            book = csv.DictWriter(bookfile, fieldnames=fieldnames)
+                            book.writerow(
+                                {'Bookid': self.bookid, 'Book title': self.title.title(), 'Author': self.author.title(),
+                                 'Status': self.status.upper()})
+
+                    else:
+                        fieldnames = ['Bookid', 'Book title', 'Author', 'Status']
+                        with open('book.csv', 'w', newline='') as bookfile:
+                            b = csv.DictWriter(bookfile, fieldnames=fieldnames)
+                            b.writeheader()
+                            b.writerow(
+                                {'Bookid': self.bookid, 'Book title': self.title.title(), 'Author': self.author.title(),
+                                 'Status': self.status.upper()})
+                    titleentry.delete(0, tkinter.END)  # Reset book title field
+                    authorentry.delete(0, tkinter.END)  # Reset author field
+                    statusentry.delete(0, tkinter.END)  # Reset status field
+                    messagebox.showinfo("Success", "Book details saved successfully.")
+                else:
+                    messagebox.showerror(title='Error', message='Fields cannot be empty')
+            except IOError:
+                messagebox.showerror("Error", "Error while writing to file")
+            except Exception:
+                messagebox.showerror("Error", "An unexpected error occurred")
+
+        # save button for books
+        save = tkinter.Button(frame3, command=save, text='Save', font=("times", 12, "bold"), fg='white',
+                              bg='dark slate gray', relief="raised", activebackground="saddle brown",
+                              activeforeground="yellow")
+        save.grid(row=7, column=0, sticky='nsew', pady=5)
+
+        def reset():
+            n = random.randint(1, 999)  # creating a unique bookid
+            b = 'VI' + str(n)
+            identry = tkinter.Label(frame3, text=b, font=("times", 12, "bold"), fg='white', bg='dark slate gray',
+                                    relief="ridge")
+            identry.grid(row=3, column=1, sticky='nsew')
+            titleentry.delete(0, tkinter.END)  # Reset book title field
+            authorentry.delete(0, tkinter.END)  # Reset author field
+            statusentry.delete(0, tkinter.END)  # Reset status field
 
     ###############Reset and Exit button for  add books##############
-    resetfield=tkinter.Button(frame3,command=reset,text='Reset',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    resetfield.grid(row=7,column=1,sticky='nsew',pady=5)
-    addexit=tkinter.Button(frame3,command=frame3.destroy,text='Exit',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    addexit.grid(row=7,column=2,sticky='nsew',pady=5)
+        resetfield=tkinter.Button(frame3,command=reset,text='Reset',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="raised",activebackground="saddle brown",activeforeground="yellow")
+        resetfield.grid(row=7,column=1,sticky='nsew',pady=5)
+        addexit=tkinter.Button(frame3,command=frame3.destroy,text='Exit',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="raised",activebackground="saddle brown",activeforeground="yellow")
+        addexit.grid(row=7,column=2,sticky='nsew',pady=5)
 
-##############################Deletes book into the library###################
+    def delbook(self):
 
-def delbook1():
+        frame3 = tkinter.LabelFrame(window, width=800, height=450, bg='PeachPuff4')  # frame 3
+        frame3.grid(row=2, columnspan=2, sticky='nsew', padx=10)
+        head = tkinter.Label(frame3, text='******You can delete books******', font=("times", 14, "bold"))
+        head.grid(row=2, column=0, columnspan=3, sticky='nsew', pady=5)
 
-    frame3 = tkinter.LabelFrame(window, width=800, height=450, bg='PeachPuff4')# frame 3
-    frame3.grid(row=2, columnspan=2, sticky='nsew',padx=10)
-    head=tkinter.Label(frame3,text='******You can delete books******',font=("times", 14, "bold"))
-    head.grid(row=2,column=0,columnspan=3,sticky='nsew',pady=5)
-
-    idlabel=tkinter.Label(frame3,text='Book Title :',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="sunken")
-    idlabel.grid(row=3,column=0,sticky='nsew')
-    book=[]
-    with open('book.csv','r') as bfile:
-        b=DictReader(bfile)
-        for i in b:
-            a=i['Book title']
-            book.append(a)
-
-    def show(*args):
-
-        bk =clicked.get()
-        id=''
-        with open('book.csv','r') as bfile:
-            b=DictReader(bfile)
+        idlabel = tkinter.Label(frame3, text='Book Title :', font=("times", 12, "bold"), fg='white',
+                                bg='dark slate gray', relief="sunken")
+        idlabel.grid(row=3, column=0, sticky='nsew')
+        book = []
+        with open('book.csv', 'r') as bfile:
+            b = DictReader(bfile)
             for i in b:
-                if i['Book title']==bk:
-                    id=i['Bookid']
-        found=False
-        newfound=False
-        #creating a temp file as original
-        with open('book.csv','r',newline='') as book1file,\
-            open('tempbook.csv',mode='w') as copyfile:
-            bid=csv.DictReader(book1file)
-            fieldnames=bid.fieldnames
-            writer=csv.DictWriter(copyfile,fieldnames)
-            writer.writeheader()
-            for item in bid:
-                if item['Bookid']==id:
-                    au=item['Author']
-                    st=item['Status']
-                    booktitle = tkinter.Label(frame3, text="Book Id",font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="sunken")
-                    booktitle.grid(row=4, column=0, sticky='nsew')
-                    bookt = tkinter.Label(frame3, text=id,relief='solid')
-                    bookt.grid(row=4, column=1, sticky='nsew')
-                    bookauth = tkinter.Label(frame3, text="Author",font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="sunken")
-                    bookauth.grid(row=5, column=0, sticky='nsew')
-                    bookau = tkinter.Label(frame3, text=au,relief='solid')
-                    bookau.grid(row=5, column=1, sticky='nsew')
-                    bookstat = tkinter.Label(frame3, text="Status",font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="sunken")
-                    bookstat.grid(row=6, column=0, sticky='nsew')
-                    bookst = tkinter.Label(frame3, text=st,relief='solid')
-                    bookst.grid(row=6, column=1, sticky='nsew')
-                    found=True
-                elif item['Bookid']!=id:
-                    writer.writerow(item)# writes the other files into new csv except for the matching one
-                    newfound=True
+                a = i['Book title']
+                book.append(a)
 
-            if not found:
-                messagebox.showerror(title='Error', message='No Book in that ID')
-    clicked = tkinter.StringVar(frame3)
-    clicked.set(book[0])
-    bookentry = OptionMenu(frame3, clicked, *book)
-    bookentry.grid(row=3, column=1,sticky='nsew')
-    clicked.trace_add("write", show)
+        def show(*args):
 
-    def delcopy():#DElete button
-        import os
-        os.replace('tempbook.csv','book.csv')# replaces the original data file with the content of new csv file
-        messagebox.showerror(title='Success', message='Book deleted')
+            bk = clicked.get()
+            id = ''
+            with open('book.csv', 'r') as bfile:
+                b = DictReader(bfile)
+                for i in b:
+                    if i['Book title'] == bk:
+                        id = i['Bookid']
+            found = False
+            newfound = False
+            # creating a temp file as original
+            with open('book.csv', 'r', newline='') as book1file, \
+                    open('tempbook.csv', mode='w') as copyfile:
+                bid = csv.DictReader(book1file)
+                fieldnames = bid.fieldnames
+                writer = csv.DictWriter(copyfile, fieldnames)
+                writer.writeheader()
+                for item in bid:
+                    if item['Bookid'] == id:
+                        au = item['Author']
+                        st = item['Status']
+                        booktitle = tkinter.Label(frame3, text="Book Id", font=("times", 12, "bold"), fg='white',
+                                                  bg='dark slate gray', relief="sunken")
+                        booktitle.grid(row=4, column=0, sticky='nsew')
+                        bookt = tkinter.Label(frame3, text=id, relief='solid')
+                        bookt.grid(row=4, column=1, sticky='nsew')
+                        bookauth = tkinter.Label(frame3, text="Author", font=("times", 12, "bold"), fg='white',
+                                                 bg='dark slate gray', relief="sunken")
+                        bookauth.grid(row=5, column=0, sticky='nsew')
+                        bookau = tkinter.Label(frame3, text=au, relief='solid')
+                        bookau.grid(row=5, column=1, sticky='nsew')
+                        bookstat = tkinter.Label(frame3, text="Status", font=("times", 12, "bold"), fg='white',
+                                                 bg='dark slate gray', relief="sunken")
+                        bookstat.grid(row=6, column=0, sticky='nsew')
+                        bookst = tkinter.Label(frame3, text=st, relief='solid')
+                        bookst.grid(row=6, column=1, sticky='nsew')
+                        found = True
+                    elif item['Bookid'] != id:
+                        writer.writerow(item)  # writes the other files into new csv except for the matching one
+                        newfound = True
 
-#del and exit buttons
-    delbutton=tkinter.Button(frame3,command=delcopy,text='Delete',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    delbutton.grid(row=7,column=1,sticky='nsew',pady=5)
-    delexit=tkinter.Button(frame3,command=frame3.destroy,text='Exit',font=("times", 12, "bold"),fg='white',bg='dark slate gray',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    delexit.grid(row=7,column=2,sticky='nsew',pady=5)
+                if not found:
+                    messagebox.showerror(title='Error', message='No Book in that ID')
 
-#login window for authentication
+        clicked = tkinter.StringVar(frame3)
+        clicked.set(book[0])
+        bookentry = OptionMenu(frame3, clicked, *book)
+        bookentry.grid(row=3, column=1, sticky='nsew')
+        clicked.trace_add("write", show)
+
+        def delcopy():  # DElete button
+            import os
+            os.replace('tempbook.csv', 'book.csv')  # replaces the original data file with the content of new csv file
+            messagebox.showerror(title='Success', message='Book deleted')
+
+        # del and exit buttons
+        delbutton = tkinter.Button(frame3, command=delcopy, text='Delete', font=("times", 12, "bold"), fg='white',
+                                   bg='dark slate gray', relief="raised", activebackground="saddle brown",
+                                   activeforeground="yellow")
+        delbutton.grid(row=7, column=1, sticky='nsew', pady=5)
+        delexit = tkinter.Button(frame3, command=frame3.destroy, text='Exit', font=("times", 12, "bold"), fg='white',
+                                 bg='dark slate gray', relief="raised", activebackground="saddle brown",
+                                 activeforeground="yellow")
+        delexit.grid(row=7, column=2, sticky='nsew', pady=5)
+    def searchauthor(self):
+        author=[]
+        frame3 = tkinter.LabelFrame(window, width=700, height=450, bg='PeachPuff4')
+        frame3.grid(row=2, columnspan=2, sticky='nsew',padx=10)
+        head=tkinter.Label(frame3,text='******Search Books by Authors******',font=("times", 14, "bold"))
+        head.grid(row=2,column=0,columnspan=3,sticky='nsew',pady=5)
+        auth=tkinter.Label(frame3,text='Author:',font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
+        auth.grid(row=3,column=0,sticky='nsew')
+
+        with open('book.csv','r',newline='') as bookfile:
+            b=DictReader(bookfile)
+            for item in b:
+                a=item['Author']
+                author.append(a)
+        def selected(*args):
+            ch=clicked.get()
+            with open('book.csv', 'r',newline='') as book1file:
+                b1 = DictReader(book1file)
+                for item in b1:
+                    if item['Author']==ch:
+                        au = item['Bookid']
+                        nm = item['Book title']
+                        st = item['Status']
+                        bookid = tkinter.Label(frame3, text="Book Id",font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
+                        bookid.grid(row=4, column=0, sticky='nsew')
+                        bookid = tkinter.Label(frame3, text=au,relief='solid')
+                        bookid.grid(row=4, column=1, sticky='nw')
+                        booktitle = tkinter.Label(frame3, text="Book Title",font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
+                        booktitle.grid(row=5, column=0, sticky='nsew')
+                        booktitle = tkinter.Label(frame3, text=nm,relief='solid')
+                        booktitle.grid(row=5, column=1, sticky='nw')
+                        bookstat = tkinter.Label(frame3, text="Status",font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
+                        bookstat.grid(row=6, column=0, sticky='nsew')
+                        bookstat = tkinter.Label(frame3, text=st,relief='solid')
+                        bookstat.grid(row=6, column=1, sticky='nw')
+        clicked = tkinter.StringVar(frame3)
+        clicked.set(author[0])
+        authentry = OptionMenu(frame3, clicked,*author)
+        authentry.grid(row=3, column=1,sticky='nw')
+        clicked.trace_add("write", selected)
+        delexit=tkinter.Button(frame3,command=frame3.destroy,text='Exit',font=("times", 12, "bold"),fg='white',bg='gray24',relief="raised",activebackground="saddle brown",activeforeground="yellow")
+        delexit.grid(row=7,column=1,sticky='nsew',pady=5)
+
+    def searchtitle(self):
+        title = []
+        frame3 = tkinter.LabelFrame(window, width=700, height=450, bg='PeachPuff4')
+        frame3.grid(row=2, columnspan=2, sticky='nsew', padx=10)
+        head = tkinter.Label(frame3, text='******Search Books by Title******', font=("times", 14, "bold"))
+        head.grid(row=2, column=0, columnspan=3, sticky='nsew', pady=5)
+        auth = tkinter.Label(frame3, text='Title:', font=("times", 12, "bold"), fg='white', bg='gray24', relief="ridge")
+        auth.grid(row=3, column=0, sticky='nsew')
+
+        with open('book.csv', 'r', newline='') as bookfile:
+            b = DictReader(bookfile)
+            for item in b:
+                a = item['Book title']
+                title.append(a)
+
+        def selected(*args):
+            ch = clicked.get()
+            with open('book.csv', 'r', newline='') as book1file:
+                b1 = DictReader(book1file)
+                for item in b1:
+                    if item['Book title'] == ch:
+                        au = item['Bookid']
+                        nm = item['Author']
+                        st = item['Status']
+                        bookid = tkinter.Label(frame3, text="Book Id", font=("times", 12, "bold"), fg='white',
+                                               bg='gray24', relief="ridge")
+                        bookid.grid(row=4, column=0, sticky='nsew')
+                        bookid = tkinter.Label(frame3, text=au, relief='solid')
+                        bookid.grid(row=4, column=1, sticky='nsew')
+                        bookauth = tkinter.Label(frame3, text="Author:", font=("times", 12, "bold"), fg='white',
+                                                 bg='gray24', relief="ridge")
+                        bookauth.grid(row=5, column=0, sticky='nsew')
+                        bookauth = tkinter.Label(frame3, text=nm, relief='solid')
+                        bookauth.grid(row=5, column=1, sticky='nsew')
+                        bookstat = tkinter.Label(frame3, text="Status", font=("times", 12, "bold"), fg='white',
+                                                 bg='gray24', relief="ridge")
+                        bookstat.grid(row=6, column=0, sticky='nsew')
+                        bookstat = tkinter.Label(frame3, text=st, relief='solid')
+                        bookstat.grid(row=6, column=1, sticky='nsew')
+
+        clicked = tkinter.StringVar(frame3)
+        clicked.set(title[0])
+        titleentry = OptionMenu(frame3, clicked, *title)
+        titleentry.grid(row=3, column=1, sticky='nw')
+        clicked.trace_add("write", selected)
+        titleexit = tkinter.Button(frame3, command=frame3.destroy, text='Exit', font=("times", 12, "bold"), fg='white',
+                                   bg='gray24', relief="raised", activebackground="saddle brown",
+                                   activeforeground="yellow")
+        titleexit.grid(row=7, column=1, sticky='nsew', pady=5)
+
+class Member:
+    def __init__(self, name):
+        n = random.randint(1, 999)  # creating a unique bookid
+        b = 'MV' + str(n)
+        self.memid = b
+        self.name = name
+        self.phone = ''
+        self.email=''
+
+    def addmem(self):
+        # Frame for addition
+        frame3 = tkinter.LabelFrame(window, width=700, height=450, bg='PeachPuff4')
+        frame3.grid(row=2, columnspan=2, sticky='nsew', padx=10)
+        head = tkinter.Label(frame3, text='******Become Members by Adding details******', font=("times", 14, "bold"))
+        head.grid(row=2, column=0, columnspan=3, sticky='nsew', pady=5)
+
+        idlabel = tkinter.Label(frame3, text='Membership Id ', font=("times", 12, "bold"), fg='white', bg='salmon4',
+                                relief="ridge")
+        idlabel.grid(row=3, column=0, sticky='nsew')
+
+        identry = tkinter.Label(frame3, text=self.memid, relief='solid')
+        identry.grid(row=3, column=1, sticky='nsew')
+        namelabel = tkinter.Label(frame3, text='Name:', font=("times", 12, "bold"), fg='white', bg='salmon4',
+                                  relief="ridge")
+        namelabel.grid(row=4, column=0, sticky='nsew')
+        nameentry = tkinter.Entry(frame3, relief='solid')
+        nameentry.grid(row=4, column=1, sticky='nsew')
+        phno = tkinter.Label(frame3, text='Phone number:', font=("times", 12, "bold"), fg='white', bg='salmon4',
+                             relief="ridge")
+        phno.grid(row=5, column=0, sticky='nsew')
+        phnoentry = tkinter.Entry(frame3, relief='solid')
+        phnoentry.grid(row=5, column=1, sticky='nsew')
+        email = tkinter.Label(frame3, text='Email:', font=("times", 12, "bold"), fg='white', bg='salmon4',
+                              relief="ridge")
+        email.grid(row=6, column=0, sticky='nsew')
+        emailentry = tkinter.Entry(frame3, relief='solid')
+        emailentry.grid(row=6, column=1, sticky='nsew')
+
+        def reset():
+            n = random.randint(1, 999)  # creating a unique bookid
+            b = 'MV' + str(n)
+            identry = tkinter.Label(frame3, text=b, relief='solid')
+            identry.grid(row=3, column=1, sticky='nsew')
+
+            nameentry.delete(0, tkinter.END)  # Reset book title field
+            phnoentry.delete(0, tkinter.END)  # Reset author field
+            emailentry.delete(0, tkinter.END)  # Reset status field
+
+        def save():
+            self.name = nameentry.get()
+            self.phone = phnoentry.get()
+            self.email = emailentry.get()
+            if self.name and self.phone and self.email:
+                if filepath2.exists():
+                    with open('member.csv', 'a', newline='') as memfile:
+                        fieldnames = ['Memid', 'Mem name', 'Phoneno', 'Email']
+                        m = csv.DictWriter(memfile, fieldnames=fieldnames)
+                        m.writerow(
+                            {'Memid': self.memid, 'Mem name': self.name.title(), 'Phoneno': self.phone, 'Email': self.email.lower()})
+                    nameentry.delete(0, tkinter.END)  # Reset book title field
+                    phnoentry.delete(0, tkinter.END)  # Reset author field
+                    emailentry.delete(0, tkinter.END)  # Reset status field
+                else:
+                    fieldnames = ['Memid', 'Mem name', 'Phoneno', 'Email']
+                    with open('member.csv', 'w', newline='') as memfile:
+                        m = csv.DictWriter(memfile, fieldnames=fieldnames)
+                        m.writeheader()
+                        m.writerow(
+                            {'Memid': self.memid, 'Mem name': self.name.title(), 'Phoneno': self.phone, 'Email': self.email.lower()})
+                    nameentry.delete(0, tkinter.END)  # Reset book title field
+                    phnoentry.delete(0, tkinter.END)  # Reset author field
+                    emailentry.delete(0, tkinter.END)  # Reset status field
+                messagebox.showinfo("Success", "Member details saved successfully.")
+            else:
+                messagebox.showerror(title='Error', message='Fields cannot be empty')
+
+        save = tkinter.Button(frame3, text='Save', command=save, font=("times", 12, "bold"), fg='white', bg='salmon4',
+                              relief="raised", activebackground="saddle brown", activeforeground="yellow")
+        save.grid(row=7, column=0, sticky='nsew', pady=5)
+        # After saving, reset fields
+
+        resetfield = tkinter.Button(frame3, command=reset, text='Reset', font=("times", 12, "bold"), fg='white',
+                                    bg='salmon4', relief="raised", activebackground="saddle brown",
+                                    activeforeground="yellow")
+        resetfield.grid(row=7, column=1, sticky='nsew', pady=5)
+        addexit = tkinter.Button(frame3, command=frame3.destroy, text='Exit', font=("times", 12, "bold"), fg='white',
+                                 bg='salmon4', relief="raised", activebackground="saddle brown",
+                                 activeforeground="yellow")
+        addexit.grid(row=7, column=2, sticky='nsew', pady=5)
+
+    def delmem(self):
+        frame3 = tkinter.LabelFrame(window, width=800, height=450, bg='PeachPuff4')  # frame 3
+        frame3.grid(row=2, columnspan=2, sticky='nsew', padx=10)
+        head = tkinter.Label(frame3, text='******You Can Delete Library Members******', font=("times", 14, "bold"))
+        head.grid(row=2, column=0, columnspan=3, sticky='nsew', pady=5)
+        idlabel = tkinter.Label(frame3, text='Member name', font=("times", 12, "bold"), fg='white', bg='salmon4',
+                                relief="ridge")
+        idlabel.grid(row=3, column=0, sticky='nsew')
+        mem = []
+        with open('member.csv', 'r') as mfile:
+            b = DictReader(mfile)
+            for i in b:
+                a = i['Mem name']
+                mem.append(a)
+
+        def show(*args):
+            found = False
+            newfound = False
+            ch = clicked.get()
+            id = ''
+            with open('member.csv', 'r') as mfile:
+                b = DictReader(mfile)
+                for i in b:
+                    if i['Mem name'] == ch:
+                        id = i['Memid']
+            with open('member.csv', 'r', newline='') as memfile, \
+                    open('tempmem.csv', mode='w') as copyfile:  # creating a csv file
+                mid = csv.DictReader(memfile)
+                fieldnames = mid.fieldnames
+                writer = csv.DictWriter(copyfile, fieldnames)  # temp csv file with the same fields
+                writer.writeheader()
+                for item in mid:
+                    print(item)
+                    if item['Memid'] == id:
+                        phone = item['Phoneno']
+                        em = item['Email']
+                        memid = tkinter.Label(frame3, text="Member Id", font=("times", 12, "bold"), fg='white',
+                                              bg='salmon4', relief="ridge")
+                        memid.grid(row=4, column=0, sticky='nsew')
+                        memid1 = tkinter.Label(frame3, text=id, relief='solid')
+                        memid1.grid(row=4, column=1, sticky='nsew')
+                        ph = tkinter.Label(frame3, text="Phone number", font=("times", 12, "bold"), fg='white',
+                                           bg='salmon4', relief="ridge")
+                        ph.grid(row=5, column=0, sticky='nsew')
+                        ph1 = tkinter.Label(frame3, text=phone, relief='solid')
+                        ph1.grid(row=5, column=1, sticky='nsew')
+                        email = tkinter.Label(frame3, text="Email", font=("times", 12, "bold"), fg='white',
+                                              bg='salmon4', relief="ridge")
+                        email.grid(row=6, column=0, sticky='nsew')
+                        email1 = tkinter.Label(frame3, text=em, relief='solid')
+                        email1.grid(row=6, column=1, sticky='nsew')
+                        found = True
+                    elif item['Memid'] != id:
+                        writer.writerow(item)  # writes the other files into new csv except for the delete file
+                        newfound = True
+
+                if not found:
+                    messagebox.showerror(title='Error', message='Library Member deleted')
+
+        clicked = tkinter.StringVar(frame3)
+        clicked.set(mem[0])
+        mementry = OptionMenu(frame3, clicked, *mem)
+        mementry.grid(row=3, column=1, sticky='nsew')
+        clicked.trace_add("write", show)
+
+        def delcopy():  # DElete button
+            import os
+            os.replace('tempmem.csv', 'member.csv')  # replaces the original data file with the content of new csv file
+            messagebox.showerror(title='Success', message='Member deleted')
+
+        delbutton = tkinter.Button(frame3, command=delcopy, text='Delete', font=("times", 12, "bold"), fg='white',
+                                   bg='salmon4', relief="raised", activebackground="saddle brown",
+                                   activeforeground="yellow")
+        delbutton.grid(row=7, column=1, sticky='nsew', pady=5)
+        delexit = tkinter.Button(frame3, command=frame3.destroy, text='Exit', font=("times", 12, "bold"), fg='white',
+                                 bg='salmon4', relief="raised", activebackground="saddle brown",
+                                 activeforeground="yellow")
+        delexit.grid(row=7, column=2, sticky='nsew', pady=5)
+
 def loginwin():
     loginwindow=tkinter.Toplevel(window)
     loginwindow.geometry('200x100')
@@ -227,233 +480,6 @@ def loginwin():
     check=tkinter.Button(loginwindow,text='Login',command=lambda :[validate()])
     check.grid(row=2,column=1)
 
-
-def searchauthor():
-    author=[]
-    frame3 = tkinter.LabelFrame(window, width=700, height=450, bg='PeachPuff4')
-    frame3.grid(row=2, columnspan=2, sticky='nsew',padx=10)
-    head=tkinter.Label(frame3,text='******Search Books by Authors******',font=("times", 14, "bold"))
-    head.grid(row=2,column=0,columnspan=3,sticky='nsew',pady=5)
-    auth=tkinter.Label(frame3,text='Author:',font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
-    auth.grid(row=3,column=0,sticky='nsew')
-
-    with open('book.csv','r',newline='') as bookfile:
-        b=DictReader(bookfile)
-        for item in b:
-            a=item['Author']
-            author.append(a)
-    def selected(*args):
-        ch=clicked.get()
-        with open('book.csv', 'r',newline='') as book1file:
-            b1 = DictReader(book1file)
-            for item in b1:
-                if item['Author']==ch:
-                    au = item['Bookid']
-                    nm = item['Book title']
-                    st = item['Status']
-                    bookid = tkinter.Label(frame3, text="Book Id",font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
-                    bookid.grid(row=4, column=0, sticky='nsew')
-                    bookid = tkinter.Label(frame3, text=au,relief='solid')
-                    bookid.grid(row=4, column=1, sticky='nw')
-                    booktitle = tkinter.Label(frame3, text="Book Title",font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
-                    booktitle.grid(row=5, column=0, sticky='nsew')
-                    booktitle = tkinter.Label(frame3, text=nm,relief='solid')
-                    booktitle.grid(row=5, column=1, sticky='nw')
-                    bookstat = tkinter.Label(frame3, text="Status",font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
-                    bookstat.grid(row=6, column=0, sticky='nsew')
-                    bookstat = tkinter.Label(frame3, text=st,relief='solid')
-                    bookstat.grid(row=6, column=1, sticky='nw')
-    clicked = tkinter.StringVar(frame3)
-    clicked.set(author[0])
-    authentry = OptionMenu(frame3, clicked,*author)
-    authentry.grid(row=3, column=1,sticky='nw')
-    clicked.trace_add("write", selected)
-    delexit=tkinter.Button(frame3,command=frame3.destroy,text='Exit',font=("times", 12, "bold"),fg='white',bg='gray24',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    delexit.grid(row=7,column=1,sticky='nsew',pady=5)
-
-def searchtitle():
-    title=[]
-    frame3 = tkinter.LabelFrame(window, width=700, height=450, bg='PeachPuff4')
-    frame3.grid(row=2, columnspan=2, sticky='nsew',padx=10)
-    head=tkinter.Label(frame3,text='******Search Books by Title******',font=("times", 14, "bold"))
-    head.grid(row=2,column=0,columnspan=3,sticky='nsew',pady=5)
-    auth=tkinter.Label(frame3,text='Title:',font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
-    auth.grid(row=3,column=0,sticky='nsew')
-
-    with open('book.csv','r',newline='') as bookfile:
-        b=DictReader(bookfile)
-        for item in b:
-            a=item['Book title']
-            title.append(a)
-    def selected(*args):
-        ch=clicked.get()
-        with open('book.csv', 'r',newline='') as book1file:
-            b1 = DictReader(book1file)
-            for item in b1:
-                if item['Book title']==ch:
-                    au = item['Bookid']
-                    nm = item['Author']
-                    st = item['Status']
-                    bookid = tkinter.Label(frame3, text="Book Id",font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
-                    bookid.grid(row=4, column=0, sticky='nsew')
-                    bookid = tkinter.Label(frame3, text=au,relief='solid')
-                    bookid.grid(row=4, column=1, sticky='nsew')
-                    bookauth = tkinter.Label(frame3, text="Author:",font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
-                    bookauth.grid(row=5, column=0, sticky='nsew')
-                    bookauth = tkinter.Label(frame3, text=nm,relief='solid')
-                    bookauth.grid(row=5, column=1, sticky='nsew')
-                    bookstat = tkinter.Label(frame3, text="Status",font=("times", 12, "bold"),fg='white',bg='gray24',relief="ridge")
-                    bookstat.grid(row=6, column=0, sticky='nsew')
-                    bookstat = tkinter.Label(frame3, text=st,relief='solid')
-                    bookstat.grid(row=6, column=1, sticky='nsew')
-    clicked = tkinter.StringVar(frame3)
-    clicked.set(title[0])
-    titleentry = OptionMenu(frame3, clicked,*title)
-    titleentry.grid(row=3, column=1,sticky='nw')
-    clicked.trace_add("write", selected)
-    titleexit=tkinter.Button(frame3,command=frame3.destroy,text='Exit',font=("times", 12, "bold"),fg='white',bg='gray24',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    titleexit.grid(row=7,column=1,sticky='nsew',pady=5)
-
-def addmem():
-    #Frame for addition
-    frame3 = tkinter.LabelFrame(window, width=700, height=450, bg='PeachPuff4')
-    frame3.grid(row=2, columnspan=2, sticky='nsew',padx=10)
-    head=tkinter.Label(frame3,text='******Become Members by Adding details******',font=("times", 14, "bold"))
-    head.grid(row=2,column=0,columnspan=3,sticky='nsew',pady=5)
-
-    idlabel=tkinter.Label(frame3,text='Membership Id ',font=("times", 12, "bold"),fg='white',bg='salmon4',relief="ridge")
-    idlabel.grid(row=3,column=0,sticky='nsew')
-    m1 = Member('')
-    memid=m1.genmemid()
-
-    identry = tkinter.Label(frame3,text=memid,relief='solid')
-    identry.grid(row=3, column=1,sticky='nsew')
-    namelabel=tkinter.Label(frame3,text='Name:',font=("times", 12, "bold"),fg='white',bg='salmon4',relief="ridge")
-    namelabel.grid(row=4,column=0,sticky='nsew')
-    nameentry=tkinter.Entry(frame3,relief='solid')
-    nameentry.grid(row=4,column=1,sticky='nsew')
-    phno=tkinter.Label(frame3,text='Phone number:',font=("times", 12, "bold"),fg='white',bg='salmon4',relief="ridge")
-    phno.grid(row=5,column=0,sticky='nsew')
-    phnoentry=tkinter.Entry(frame3,relief='solid')
-    phnoentry.grid(row=5,column=1,sticky='nsew')
-    email=tkinter.Label(frame3,text='Email:',font=("times", 12, "bold"),fg='white',bg='salmon4',relief="ridge")
-    email.grid(row=6,column=0,sticky='nsew')
-    emailentry=tkinter.Entry(frame3,relief='solid')
-    emailentry.grid(row=6,column=1,sticky='nsew')
-    def reset():
-        n = random.randint(1, 999)  # creating a unique bookid
-        b = 'MV' + str(n)
-        identry = tkinter.Label(frame3, text=b, relief='solid')
-        identry.grid(row=3, column=1, sticky='nsew')
-
-        nameentry.delete(0, tkinter.END)  # Reset book title field
-        phnoentry.delete(0, tkinter.END)  # Reset author field
-        emailentry.delete(0, tkinter.END)  # Reset status field
-    def save():
-        name=nameentry.get()
-        phno1=phnoentry.get()
-        email1=emailentry.get()
-        if name and phno1 and email1:
-            if filepath2.exists():
-                with open('member.csv', 'a', newline='') as memfile:
-                    fieldnames = ['Memid','Mem name','Phoneno','Email']
-                    m = csv.DictWriter(memfile, fieldnames=fieldnames)
-                    m.writerow(
-                        {'Memid':memid,'Mem name':name.title(),'Phoneno':phno1,'Email':email1.lower()})
-                nameentry.delete(0, tkinter.END)  # Reset book title field
-                phnoentry.delete(0, tkinter.END)  # Reset author field
-                emailentry.delete(0, tkinter.END)  # Reset status field
-            else:
-                fieldnames = ['Memid', 'Mem name', 'Phoneno', 'Email']
-                with open('member.csv', 'w', newline='') as memfile:
-                    m = csv.DictWriter(memfile, fieldnames=fieldnames)
-                    m.writeheader()
-                    m.writerow(
-                        {'Memid':memid,'Mem name':name.title(),'Phoneno':phno1,'Email':email1.lower()})
-                nameentry.delete(0, tkinter.END)  # Reset book title field
-                phnoentry.delete(0, tkinter.END)  # Reset author field
-                emailentry.delete(0, tkinter.END)  # Reset status field
-            messagebox.showinfo("Success", "Member details saved successfully.")
-        else:
-            messagebox.showerror(title='Error',message='Fields cannot be empty')
-    save=tkinter.Button(frame3,text='Save',command=save,font=("times", 12, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    save.grid(row=7,column=0,sticky='nsew',pady=5)
-    # After saving, reset fields
-
-    resetfield=tkinter.Button(frame3,command=reset,text='Reset',font=("times", 12, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    resetfield.grid(row=7,column=1,sticky='nsew',pady=5)
-    addexit=tkinter.Button(frame3,command=frame3.destroy,text='Exit',font=("times", 12, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    addexit.grid(row=7,column=2,sticky='nsew',pady=5)
-
-def delmem():
-    frame3 = tkinter.LabelFrame(window, width=800, height=450, bg='PeachPuff4')# frame 3
-    frame3.grid(row=2, columnspan=2, sticky='nsew',padx=10)
-    head=tkinter.Label(frame3,text='******You Can Delete Library Members******',font=("times", 14, "bold"))
-    head.grid(row=2,column=0,columnspan=3,sticky='nsew',pady=5)
-    idlabel=tkinter.Label(frame3,text='Member name',font=("times", 12, "bold"),fg='white',bg='salmon4',relief="ridge")
-    idlabel.grid(row=3,column=0,sticky='nsew')
-    mem=[]
-    with open('member.csv','r') as mfile:
-        b=DictReader(mfile)
-        for i in b:
-            a=i['Mem name']
-            mem.append(a)
-    def show(*args):
-        found=False
-        newfound=False
-        ch =clicked.get()
-        id=''
-        with open('member.csv','r') as mfile:
-            b=DictReader(mfile)
-            for i in b:
-                if i['Mem name']==ch:
-                    id=i['Memid']
-        with open('member.csv','r',newline='') as memfile,\
-            open('tempmem.csv',mode='w') as copyfile:#creating a csv file
-            mid=csv.DictReader(memfile)
-            fieldnames=mid.fieldnames
-            writer=csv.DictWriter(copyfile,fieldnames)# temp csv file with the same fields
-            writer.writeheader()
-            for item in mid:
-                print(item)
-                if item['Memid']==id:
-                    phone=item['Phoneno']
-                    em=item['Email']
-                    memid = tkinter.Label(frame3, text="Member Id",font=("times", 12, "bold"),fg='white',bg='salmon4',relief="ridge")
-                    memid.grid(row=4, column=0, sticky='nsew')
-                    memid1 = tkinter.Label(frame3, text=id, relief='solid')
-                    memid1.grid(row=4, column=1, sticky='nsew')
-                    ph = tkinter.Label(frame3, text="Phone number",font=("times", 12, "bold"),fg='white',bg='salmon4',relief="ridge")
-                    ph.grid(row=5, column=0, sticky='nsew')
-                    ph1 = tkinter.Label(frame3, text=phone,relief='solid')
-                    ph1.grid(row=5, column=1, sticky='nsew')
-                    email = tkinter.Label(frame3, text="Email",font=("times", 12, "bold"),fg='white',bg='salmon4',relief="ridge")
-                    email.grid(row=6, column=0, sticky='nsew')
-                    email1 = tkinter.Label(frame3, text=em,relief='solid')
-                    email1.grid(row=6, column=1, sticky='nsew')
-                    found=True
-                elif item['Memid']!=id:
-                    writer.writerow(item)# writes the other files into new csv except for the delete file
-                    newfound=True
-
-            if not found:
-                messagebox.showerror(title='Error', message='Library Member deleted')
-    clicked = tkinter.StringVar(frame3)
-    clicked.set(mem[0])
-    mementry = OptionMenu(frame3, clicked, *mem)
-    mementry.grid(row=3, column=1,sticky='nsew')
-    clicked.trace_add("write",show)
-
-    def delcopy():#DElete button
-        import os
-        os.replace('tempmem.csv','member.csv')# replaces the original data file with the content of new csv file
-        messagebox.showerror(title='Success', message='Member deleted')
-
-    delbutton=tkinter.Button(frame3,command=delcopy,text='Delete',font=("times", 12, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    delbutton.grid(row=7,column=1,sticky='nsew',pady=5)
-    delexit=tkinter.Button(frame3,command=frame3.destroy,text='Exit',font=("times", 12, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="saddle brown",activeforeground="yellow")
-    delexit.grid(row=7,column=2,sticky='nsew',pady=5)
-
 def savechk():
     currentdate = datetime.now().date()#current date
     duedate = currentdate + timedelta(weeks=1)#Adding one week to current date
@@ -469,7 +495,7 @@ def savechk():
         for i in c1file:
             id1=i.strip('\n')
             ids.append(id1)
-    print(ids)
+
 
     fieldnames=['Memid','Mem name' ,'Due date','Bookid']
     with open('checkouts.csv','a',newline='') as chkfile:
@@ -554,16 +580,15 @@ def checkout():
         ch1=clicked1.get()
         with open('member.csv', 'r',newline='') as mem1file:
             m1=DictReader(mem1file)
+
             for item in m1:
                 if item['Mem name']==str(ch1):
                     mid=item['Memid']
                     nm=item['Mem name']
-                    print(mid)
-                    print(nm)
                 elif item['Mem name']=='':
-                    selected1()
-                else:
-                    print('Error')
+                    messagebox.showerror(title='Error', message='Select Member name')
+
+
         with open('chkout.txt', 'a',newline='') as cfile:
             cfile.write(mid.strip()+'\n')
             cfile.write(nm.strip()+'\n')
@@ -591,10 +616,15 @@ def checkout():
     chkoutexit=tkinter.Button(frame3,command=frame3.destroy,text='Exit',font=("times", 12, "bold"),fg='white',bg='LightPink4',relief="raised",activebackground="saddle brown",activeforeground="yellow")
     chkoutexit.grid(row=6,column=2,sticky='nsew')
 
+def returncheck():
+    with open('checkouts.csv','r') as file:
+        c = len(file.readlines())
+    if c <= 2:
+        messagebox.showerror(title='Error', message='No books are checked out')
+    elif c>=2:
+        returns1()
 
-
-
-def returns():
+def returns1():
     frame3 = tkinter.LabelFrame(window, width=800, height=450, bg='PeachPuff4')# frame 3
     frame3.grid(row=2, columnspan=2, sticky='nsew',padx=10)
     head=tkinter.Label(frame3,text='******Library Returns******',font=("times", 14, "bold"))
@@ -608,12 +638,10 @@ def returns():
 
     with open('checkouts.csv','r') as retfile:
         rows=DictReader(retfile)
-
         for row in rows:
             a=(row['Bookid'])
             names.append(a)
-        #       with open('return2.txt','w') as retfile:
-        #                retfile.write(b)
+
     def saveret():
         os.replace('tempret.csv', 'checkouts.csv')  # replaces the original data file with the content of new csv file
         messagebox.showerror(title='Success', message='Saved Returns')
@@ -629,7 +657,6 @@ def returns():
         for row in rows1:
             if row['Bookid'] ==ch and row['Status']=='NA':
                 filefound=True
-                print('hi')
                 bnm=row['Book title']
 
                 ans = messagebox.askquestion('Returns', "Do you want to return "+bnm+"?")
@@ -681,6 +708,10 @@ def returns():
                     memdt1.grid(row=5, column=1, sticky='nw')
                     delbutton = tkinter.Button(frame3, text='Save Returns', command=saveret,font=("times", 12, "bold"),fg='white',bg='LightPink4',relief="raised",activebackground="saddle brown",activeforeground="yellow")
                     delbutton.grid(row=6, column=1, sticky='nsew')
+                    retexit = tkinter.Button(frame3, command=frame3.destroy, text='Exit', font=("times", 12, "bold"),
+                                                fg='white', bg='LightPink4', relief="raised",
+                                                activebackground="saddle brown", activeforeground="yellow")
+                    retexit.grid(row=6, column=2, sticky='nsew')
 
                     found=True
                 elif item['Bookid']!=bid:
@@ -695,6 +726,7 @@ def returns():
     nameentry = OptionMenu(frame3, clicked, *names)
     nameentry.grid(row=3, column=1,sticky='nsew')
     clicked.trace_add("write", selected)
+
 
 
 window=tkinter.Tk()
@@ -713,28 +745,31 @@ label1.grid(row=0,columnspan=2,sticky='nsew')
 frame2=tkinter.LabelFrame(window,width=700,height=200,bg='seashell4')
 frame2.grid(row=1,columnspan=2,sticky='nsew',padx=10,pady=10)
 frame2.grid_propagate(0)
-addbook=tkinter.Button(frame2,text='Add Book',font=("times", 14, "bold"),fg='white',bg='dark slate gray',relief="raised",activebackground="saddle brown",activeforeground="yellow",command=lambda :[loginwin(),addbook1()])
+
+library_instance = Library('')
+addbook=tkinter.Button(frame2,text='Add Book',font=("times", 14, "bold"),fg='white',bg='dark slate gray',relief="raised",activebackground="saddle brown",activeforeground="yellow",command=lambda:[loginwin(),library_instance.addbook()])
 addbook.grid(row=1,column=0,sticky='nsew', padx=5, pady=5)
-delbook=tkinter.Button(frame2,text='Delete Book',font=("times", 14, "bold"),fg='white',bg='dark slate gray',relief="raised",activebackground="saddle brown",activeforeground="yellow",command=lambda :[loginwin(),delbook1()])
+delbook=tkinter.Button(frame2,text='Delete Book',font=("times", 14, "bold"),fg='white',bg='dark slate gray',relief="raised",activebackground="saddle brown",activeforeground="yellow",command=lambda :[loginwin(),library_instance.delbook()])
 delbook.grid(row=1,column=1,sticky='nsew', padx=5, pady=5)
 search=tkinter.Label(frame2,text='Search',font=("times", 14, "bold"),fg='white',bg='seashell4',relief="sunken",activebackground="darkgrey",activeforeground="yellow")
 search.grid(row=2,column=0,sticky='nsew', padx=5, pady=5)
-auth=tkinter.Button(frame2,text='By Author',command=searchauthor,font=("times", 14, "bold"),fg='white',bg='wheat4',relief="raised",activebackground="saddle brown",activeforeground="yellow")
+auth=tkinter.Button(frame2,text='By Author',font=("times", 14, "bold"),fg='white',bg='wheat4',relief="raised",activebackground="saddle brown",activeforeground="yellow",command=library_instance.searchauthor)
 auth.grid(row=2,column=1,sticky='nsew', padx=5, pady=5)
-title=tkinter.Button(frame2,text='By Title',command=searchtitle,font=("times", 14, "bold"),fg='white',bg='wheat4',relief="raised",activebackground="darkgreen",activeforeground="yellow")
+title=tkinter.Button(frame2,text='By Title',font=("times", 14, "bold"),fg='white',bg='wheat4',relief="raised",activebackground="darkgreen",activeforeground="yellow",command=library_instance.searchtitle)
 title.grid(row=2,column=2,sticky='nsew', padx=5, pady=5)
 
+member_instance=Member('')
 membership=tkinter.Label(frame2,text='Membership',font=("times", 14, "bold"),fg='white',bg='seashell4',relief="sunken",activebackground="darkgreen",activeforeground="yellow")
 membership.grid(row=3,column=0,sticky='nsew', padx=5, pady=5)
-addmember=tkinter.Button(frame2,text='Add',command=addmem,font=("times", 14, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="darkgreen",activeforeground="yellow")
+addmember=tkinter.Button(frame2,text='Add',font=("times", 14, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="darkgreen",activeforeground="yellow",command=member_instance.addmem)
 addmember.grid(row=3,column=1,sticky='nsew', padx=5, pady=5)
-delmember=tkinter.Button(frame2,text='Delete',command=delmem,font=("times", 14, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="darkgreen",activeforeground="yellow")
+delmember=tkinter.Button(frame2,text='Delete',font=("times", 14, "bold"),fg='white',bg='salmon4',relief="raised",activebackground="darkgreen",activeforeground="yellow",command=member_instance.delmem)
 delmember.grid(row=3,column=2,sticky='nsew', padx=5, pady=5)
 
 
-checkout=tkinter.Button(frame2,text='CheckOuts',command=checkout,font=("times", 14, "bold"),fg='white',bg='LightPink4',relief="raised",activebackground="darkgreen",activeforeground="yellow")
+checkout=tkinter.Button(frame2,text='CheckOuts',font=("times", 14, "bold"),fg='white',bg='LightPink4',relief="raised",activebackground="darkgreen",activeforeground="yellow",command=checkout)
 checkout.grid(row=4,column=0,sticky='nsew', padx=5, pady=5)
-returns=tkinter.Button(frame2,text='Returns',command=returns,font=("times", 14, "bold"),fg='white',bg='LightPink4',relief="raised",activebackground="darkgreen",activeforeground="yellow")
+returns=tkinter.Button(frame2,text='Returns',font=("times", 14, "bold"),fg='white',bg='LightPink4',relief="raised",activebackground="darkgreen",activeforeground="yellow",command=returncheck)
 returns.grid(row=4,column=1,sticky='nsew', padx=5, pady=5)
 
 #booktitle = tkinter.Label(frame3, text="Book name: %s" % item['Book name']) To place both key and value
