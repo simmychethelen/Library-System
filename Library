@@ -528,7 +528,6 @@ def checkout():
         for book in chk:
             a=book['Book title']
             books.append(a)
-    print(books, 'first')
     with open('member.csv', 'r', newline='') as memfile:
         member = DictReader(memfile)
         for m in member:
@@ -574,8 +573,6 @@ def checkout():
             print('Hi')
             cfile.write(id.strip()+'\n')
         mementry.focus_set()
-    print(rows, 'hi')
-
     def selected1(*args):
         ch1=clicked1.get()
         with open('member.csv', 'r',newline='') as mem1file:
